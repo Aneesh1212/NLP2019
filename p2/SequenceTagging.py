@@ -217,14 +217,20 @@ def predict_classes():
     hmmC = hmm_counts(total_words, total_labels)
     classifier = create_classifier()
 
-    with open('./data_release/train.csv', encoding='latin-1') as f:
+    out_file = open("output.csv", "a")
+
+
+    with open('./data_release/val.csv', encoding='latin-1') as f:
         lines = csv.reader(f)
         next(lines)
+        i=0
         for line in lines:
             words = line[0].split()
             pos_seq = ast.literal_eval(line[1])
-            curr_sequence = viterbi_segment(
-                words, pos_seq, counts, classifier, hmmC, True)
+            curr_sequence = viterbi_segment(words, pos_seq, counts, classifier, hmmC, True)
+            for element in curr_sequence:
+                out_file.write(str(i) + "," + str(element) + "\n")
+                i+=1
             # print(curr_sequence)
 
 
