@@ -138,24 +138,24 @@ def viterbi_segment(text, pos_seq, counts, classifier, hmmcounts, isHMM):
 
             if SCORE[0][t-1]*(counts["00"]/counts["0"]) >= SCORE[1][t-1] * (counts["10"]/counts["1"]):
                 # SCORE[0][t] = SCORE[0][t-1]* (counts["00"]/counts["0"]) * classifier.prob_classify(feature_dict).prob(0)
-                SCORE[0][t] = SCORE[0][t-1] * \
-                    classifier.prob_classify(feature_dict).prob(0)
+                SCORE[0][t] = math.exp(math.log(SCORE[0][t-1] *
+                                                classifier.prob_classify(feature_dict).prob(0)))
                 BPTR[0][t] = 0
             else:
                 # SCORE[0][t] = SCORE[1][t-1]* (counts["10"]/counts["1"]) * classifier.prob_classify(feature_dict).prob(0)
-                SCORE[0][t] = SCORE[1][t-1] * \
-                    classifier.prob_classify(feature_dict).prob(0)
+                SCORE[0][t] = math.exp(math.log(SCORE[1][t-1] *
+                                                classifier.prob_classify(feature_dict).prob(0)))
                 BPTR[0][t] = 1
 
             if SCORE[0][t-1]*(counts["01"]/counts["0"]) >= SCORE[1][t-1] * (counts["11"]+1000/counts["1"]):
                 # SCORE[1][t] = SCORE[0][t-1]*(counts["01"]/counts["0"]) * classifier.prob_classify(feature_dict).prob(1)
-                SCORE[1][t] = SCORE[0][t-1] * \
-                    (classifier.prob_classify(feature_dict).prob(1))
+                SCORE[1][t] = math.exp(math.log(SCORE[0][t-1] *
+                                                (classifier.prob_classify(feature_dict).prob(1))))
                 BPTR[1][t] = 0
             else:
                 # SCORE[1][t] = SCORE[1][t-1]*(counts["11"]/counts["1"]) * classifier.prob_classify(feature_dict).prob(1)
-                SCORE[1][t] = SCORE[1][t-1] * \
-                    (classifier.prob_classify(feature_dict).prob(1))
+                SCORE[1][t] = math.exp(math.log(SCORE[1][t-1] *
+                                                (classifier.prob_classify(feature_dict).prob(1))))
                 BPTR[1][t] = 1
         else:
             word0 = "<UNK>"
@@ -219,18 +219,18 @@ def predict_classes():
 
     out_file = open("output.csv", "a")
 
-
     with open('./data_release/val.csv', encoding='latin-1') as f:
         lines = csv.reader(f)
         next(lines)
-        i=0
+        i = 0
         for line in lines:
             words = line[0].split()
             pos_seq = ast.literal_eval(line[1])
-            curr_sequence = viterbi_segment(words, pos_seq, counts, classifier, hmmC, True)
+            curr_sequence = viterbi_segment(
+                words, pos_seq, counts, classifier, hmmC, False)
             for element in curr_sequence:
                 out_file.write(str(i) + "," + str(element) + "\n")
-                i+=1
+                i += 1
             # print(curr_sequence)
 
 
