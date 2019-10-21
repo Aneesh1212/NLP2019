@@ -85,7 +85,7 @@ def create_classifier():
                 feature_dict = return_featureset(words, pos_seq, i)
                 feature_set.append((feature_dict, label_seq[i]))
 
-    classifier = nltk.MaxentClassifier.train(feature_set, max_iter=2)
+    classifier = nltk.MaxentClassifier.train(feature_set, max_iter=10)
     return classifier
 
 
@@ -129,7 +129,7 @@ def viterbi_segment(text, pos_seq, counts, classifier, hmmcounts, isHMM):
 
     for t in range(1, n):
         if(not isHMM):
-            if classifier.prob_classify(feature_dict).prob(0) < classifier.prob_classify(feature_dict).prob(1)+.5:
+            if classifier.prob_classify(feature_dict).prob(0) < classifier.prob_classify(feature_dict).prob(1):
                 # print("HERE")
                 # print(classifier.prob_classify(feature_dict).prob(0))
                 # print(classifier.prob_classify(feature_dict).prob(1))
@@ -150,12 +150,12 @@ def viterbi_segment(text, pos_seq, counts, classifier, hmmcounts, isHMM):
             if SCORE[0][t-1]*(counts["01"]/counts["0"]) >= SCORE[1][t-1] * (counts["11"]+1000/counts["1"]):
                 # SCORE[1][t] = SCORE[0][t-1]*(counts["01"]/counts["0"]) * classifier.prob_classify(feature_dict).prob(1)
                 SCORE[1][t] = SCORE[0][t-1] * \
-                    (classifier.prob_classify(feature_dict).prob(1)+.5)
+                    (classifier.prob_classify(feature_dict).prob(1))
                 BPTR[1][t] = 0
             else:
                 # SCORE[1][t] = SCORE[1][t-1]*(counts["11"]/counts["1"]) * classifier.prob_classify(feature_dict).prob(1)
                 SCORE[1][t] = SCORE[1][t-1] * \
-                    (classifier.prob_classify(feature_dict).prob(1)+.5)
+                    (classifier.prob_classify(feature_dict).prob(1))
                 BPTR[1][t] = 1
         else:
             word0 = "<UNK>"
