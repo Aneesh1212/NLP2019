@@ -47,7 +47,7 @@ def hmm_counts(words, labels):
             curr_label = str(labels[x][i])
             if(not curr_word+curr_label in counts.keys()):
                 counts["<UNK>"] += 1
-            counts[curr_word +
+3            counts[curr_word +
                    curr_label] = counts.get(curr_word + curr_label, 0) + 1
     return counts
 
