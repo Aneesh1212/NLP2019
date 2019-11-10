@@ -15,11 +15,13 @@ unk = '<UNK>'
 
 
 class RNN(nn.Module):
-    def __init__(self):  # Add relevant parameters
+    def __init__(self, input_dim, hidden_dim):  # Add relevant parameters
         super(RNN, self).__init__()
+        #self.input = torch.randn(input_dim)
         self.W1 = nn.Linear(input_dim, h)
         self.activation = nn.ReLU()
         self.W2 = nn.Linear(h, h)
+        self.hidden_state = torch.randn(hidden_dim)
         # Fill in relevant parameters
         # Ensure parameters are initialized to small values, see PyTorch documentation for guidance
         self.softmax = nn.LogSoftmax()
