@@ -15,38 +15,36 @@ unk = '<UNK>'
 
 
 class RNN(nn.Module):
-    def __init__(self, input_dim, hidden_dim):  # Add relevant parameters
+    def __init__(self, input_dim, hidden_dim, n_layers=1):  # Add relevant parameters
         super(RNN, self).__init__()
-        #self.input = torch.randn(input_dim)
-        self.W1 = nn.Linear(input_dim, h)
-        self.activation = nn.ReLU()
-        self.W2 = nn.Linear(h, h)
-        self.hidden_state = torch.randn(hidden_dim)
+        self.RNN = nn.RNN(input_dim, hidden_dim, n_layers))
+				self.n_layers=n_layers
+				self.hidden_dim=hidden_dim
         # Fill in relevant parameters
         # Ensure parameters are initialized to small values, see PyTorch documentation for guidance
-        self.softmax = nn.LogSoftmax()
-        self.loss = nn.NLLLoss()
+        self.softmax=nn.LogSoftmax()
+        self.loss=nn.NLLLoss()
 
     def compute_Loss(self, predicted_vector, gold_label):
         return self.loss(predicted_vector, gold_label)
 
+
     def forward(self, inputs):
         # begin code
-        for val in inputs:
-            z1 = self.W1(inputs)
-            z2 = self.W2(z1)
-
+				hidden_state=torch.randn(self.n_layers, self.hidden_dim)
+				output, hidden_state=self.RNN(inputs, hidden_state)
         # Remember to include the predicted unnormalized scores which should be normalized into a (log) probability distribution
-        predicted_vector = self.softmax()
+        predicted_vector=self.softmax(output)
         # end code
-        return predicted_vector
+				# hidden state not needed, here for test
+        return predicted_vector, hidden_state
 
 # You may find the functions make_vocab() and make_indices from ffnn.py useful; you are free to copy them directly (or call those functions from this file)
 
 
 def main():  # Add relevant parameters
     # X_data is a list of pairs (document, y); y in {0,1,2,3,4}
-    train_data, valid_data = fetch_data()
+    train_data, valid_data=fetch_data()
 
     # Think about the type of function that an RNN describes. To apply it, you will need to convert the text data into vector representations.
     # Further, think about where the vectors will come from. There are 3 reasonable choices:
@@ -55,15 +53,15 @@ def main():  # Add relevant parameters
     # 3) You do the same as 2) but you train (this is called fine-tuning) the pretrained embeddings further.
     # Option 3 will be the most time consuming, so we do not recommend starting with this
 
-    model = RNN()  # Fill in parameters
-    optimizer = optim.SGD(model.parameters())
+    model=RNN()  # Fill in parameters
+    optimizer=optim.SGD(model.parameters())
 
     while not stopping_condition:  # How will you decide to stop training and why
         optimizer.zero_grad()
         # You will need further code to operationalize training, ffnn.py may be helpful
 
-        predicted_vector = model(input_vector)
-        predicted_label = torch.argmax(predicted_vector)
+        predicted_vector=model(input_vector)
+        predicted_label=torch.argmax(predicted_vector)
         # You may find it beneficial to keep track of training accuracy or training loss;
 
         # Think about how to update the model and what this entails. Consider ffnn.py and the PyTorch documentation for guidance
