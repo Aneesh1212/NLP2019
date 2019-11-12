@@ -26,16 +26,13 @@ class RNN(nn.Module):
         return self.loss(predicted_vector, gold_label)
 
     def forward(self, inputs, hidden_state=None):
-        # output, hidden_state = self.RNN(inputs, hidden_state)
         output, hidden_state = self.RNN(inputs, hidden_state)
-        # Remember to include the predicted unnormalized scores which should be normalized into a (log) probability distribution
         linear_output = self.fcn(hidden_state.view(1, -1))
         output = self.softmax(linear_output)
-        # hidden state not needed, here for test
         return output, hidden_state
 
 
-def main(epochs, speed_up=1):  # Add relevant parameters
+def main(epochs, speed_up=1):
     # X_data is a list of pairs (document, y); y in {0,1,2,3,4}
     minibatch_size = 16
     train_data, valid_data = fetch_data()
@@ -43,13 +40,11 @@ def main(epochs, speed_up=1):  # Add relevant parameters
     vocab = make_vocab(train_data)
     vocab, word2index, index2word = make_indices(vocab)
     print("Fetched and indexed data")
-    # train_data = convert_to_vector_representation(train_data, word2index)
-    # valid_data = convert_to_vector_representation(valid_data, word2index)
     print("Vectorized data")
     model = RNN(input_dim=len(vocab), hidden_dim=32)
     optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
 
-    for epoch in range(epochs):  # How will you decide to stop training and why
+    for epoch in range(epochs):
         model.train()
         optimizer.zero_grad()
         loss = 0.00
@@ -79,9 +74,6 @@ def main(epochs, speed_up=1):  # Add relevant parameters
                 predicted_vector, hidden = model(input_vector, None)
                 predicted_probabilities = torch.exp(predicted_vector)
                 predicted_label = torch.argmax(predicted_probabilities)
-               ## print("predicted prob", predicted_probabilities)
-                #print("correct", correct)
-               # print("gold", gold_label)
                 if predicted_label == gold_label:
                     correct += 1
                 updated_loss = model.compute_Loss(
