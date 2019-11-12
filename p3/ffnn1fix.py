@@ -86,15 +86,14 @@ def convert_to_vector_representation(data, word2index):
 def convert_to_vector_representation_rnn(data, word2index):
     full = []
     vectorized_data = []
-    for document, y in data:
-        for word in document:
-            vector = torch.zeros(len(word2index))
-            index = word2index.get(word, word2index[unk])
-            vector[index] += 1
-            vectorized_data.append(vector)
-        full.append((vectorized_data, y))
-        vectorized_data = []
-    return full
+    vector_length = len(data[0])
+    vec = torch.zeros(vector_length, 1, len(word2index))
+    for i, word in enumerate(data[0]):
+        vector = torch.zeros(len(word2index))
+        index = word2index.get(word, word2index[unk])
+        vector[index] += 1
+        vec[i] = vector
+    return vec
 
 
 def main(hidden_dim, number_of_epochs):
