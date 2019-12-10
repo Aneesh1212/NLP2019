@@ -27,6 +27,18 @@ def model_generate():
     return(model)
 
 
+def model_generate_smaller():
+    input = Input(shape=(9, 30109))
+    fdf = Flatten()(input)
+    outputb = Dense(128)(fdf)
+    outputc = Dense(64)(outputb)
+    outputd = Dense(2, activation='sigmoid')(outputc)
+    model = Model(inputs=[input], outputs=outputd)
+    model.compile(loss='binary_crossentropy',
+                  optimizer='adam', metrics=['accuracy'])
+    return(model)
+
+
 def generate_csv(test_csv_path, X_test, Y_test):
     res = []
     for v in range(0, len(X_test)-10, 10):
